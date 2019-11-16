@@ -10,28 +10,25 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.TransitionRes;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.myaudit.R;
 import com.myaudit.database.transaction.Transaction;
-import com.myaudit.helper.TransactionDeleteListner;
+import com.myaudit.helper.TransactionClickListner;
 
 import java.util.ArrayList;
-
-import dalvik.system.DelegateLastClassLoader;
 
 public class AllTransactionAdapter extends RecyclerView.Adapter<AllTransactionAdapter.ViewHolder> {
 
     private Context context;
     private ArrayList<Transaction> arrayList;
-    private TransactionDeleteListner deleteListner;
+    private TransactionClickListner clickListner;
     private boolean isDeleteShow = false;
 
-    public AllTransactionAdapter(Context context, ArrayList<Transaction> arrayList, TransactionDeleteListner deleteListner, boolean isDeleteShow) {
+    public AllTransactionAdapter(Context context, ArrayList<Transaction> arrayList, TransactionClickListner clickListner, boolean isDeleteShow) {
         this.context = context;
         this.arrayList = arrayList;
-        this.deleteListner = deleteListner;
+        this.clickListner = clickListner;
         this.isDeleteShow = isDeleteShow;
     }
 
@@ -69,8 +66,17 @@ public class AllTransactionAdapter extends RecyclerView.Adapter<AllTransactionAd
         holder.delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(deleteListner != null){
-                    deleteListner.onDelete(arrayList.get(position), position);
+                if(clickListner != null){
+                    clickListner.onDelete(arrayList.get(position), position);
+                }
+            }
+        });
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(clickListner != null){
+                    clickListner.onTransactionClick(arrayList.get(position));
                 }
             }
         });

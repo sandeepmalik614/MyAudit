@@ -23,7 +23,7 @@ import com.myaudit.adapter.AllTransactionAdapter;
 import com.myaudit.database.totalAmount.TotalAmount;
 import com.myaudit.database.transaction.Transaction;
 import com.myaudit.database.user.User;
-import com.myaudit.helper.TransactionDeleteListner;
+import com.myaudit.helper.TransactionClickListner;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private CardView cardCloseAmount;
     private String selectedMonth = "";
 
-    private TransactionDeleteListner deleteListner = new TransactionDeleteListner() {
+    private TransactionClickListner clickListner = new TransactionClickListner() {
         @Override
         public void onDelete(final Transaction transaction, final int pos) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -98,6 +98,15 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
+            builder.show();
+        }
+
+        @Override
+        public void onTransactionClick(Transaction transaction) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle(transaction.getTitle());
+            builder.setMessage("Description: "+transaction.getDesc()+"\n\n"+"Amount: \u20B9"+transaction.getAmount()+"\n\n"+
+                    "Dated: "+transaction.getDate());
             builder.show();
         }
     };
@@ -247,7 +256,7 @@ public class MainActivity extends AppCompatActivity {
             tv_totalAmount.setText("\u20B9 0");
         }
 
-        transactionAdapter = new AllTransactionAdapter(this, transList, deleteListner, hideDelete);
+        transactionAdapter = new AllTransactionAdapter(this, transList, clickListner, hideDelete);
         rv_allTrans.setAdapter(transactionAdapter);
     }
 
