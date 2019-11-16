@@ -11,7 +11,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.ChnagePinActivity"></activity>
+        <activity android:name=".activity.ChnagePinActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.ProfileActivity"
             android:screenOrientation="portrait" />
