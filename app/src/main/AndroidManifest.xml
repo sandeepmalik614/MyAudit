@@ -11,9 +11,22 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.ConfirmPinActivity"></activity>
-        <activity android:name=".activity.TransactionActivity" />
-        <activity android:name=".activity.ForgotPinActivity" />
+        <activity android:name=".activity.ChnagePinActivity"></activity>
+        <activity
+            android:name=".activity.ProfileActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.ConfirmPinActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.TransactionActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.ForgotPinActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.RegisterActivity"
             android:screenOrientation="portrait" />
@@ -29,9 +42,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".activity.MainActivity"
-            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

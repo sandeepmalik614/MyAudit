@@ -14,14 +14,12 @@ import android.widget.Toast;
 import com.myaudit.R;
 import com.myaudit.database.totalAmount.TotalAmount;
 import com.myaudit.database.transaction.Transaction;
-import com.myaudit.database.user.User;
 import com.myaudit.utils.AppUtils;
 
 import java.util.ArrayList;
 
-import static com.myaudit.activity.SplashActivity.userDatabase;
+import static com.myaudit.activity.SplashActivity.appDatabase;
 import static com.myaudit.utils.AppUtils.getMonth;
-import static java.util.Collections.addAll;
 
 public class ConfirmPinActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -185,9 +183,9 @@ public class ConfirmPinActivity extends AppCompatActivity implements View.OnClic
             String enteredOtp = e_one + e_two + e_three + e_four;
             if (enteredOtp.equals(LoginActivity.user.getPin())) {
                 try {
-                    userDatabase.transactionDao().insertTransaction(transaction);
-                    TotalAmount totalAmount = userDatabase.totalAmountDao().getTotalAmount(getMonth());
-                    ArrayList<TotalAmount> totalAmountList = new ArrayList<>(userDatabase.totalAmountDao().getTotalAmountList());
+                    appDatabase.transactionDao().insertTransaction(transaction);
+                    TotalAmount totalAmount = appDatabase.totalAmountDao().getTotalAmount(getMonth());
+                    ArrayList<TotalAmount> totalAmountList = new ArrayList<>(appDatabase.totalAmountDao().getTotalAmountList());
                     if (totalAmount == null) {
                         if (totalAmountList.size() == 0) {
                             if (transaction.getType().equalsIgnoreCase("Debit")) {
@@ -204,16 +202,16 @@ public class ConfirmPinActivity extends AppCompatActivity implements View.OnClic
                                         String.valueOf(Integer.valueOf(totalAmountList.get(totalAmountList.size() - 1).getTotalAmount()) + amount));
                             }
                         }
-                        userDatabase.totalAmountDao().addMonth(totalAmount);
+                        appDatabase.totalAmountDao().addMonth(totalAmount);
                     } else {
                         if (transaction.getType().equalsIgnoreCase("Debit")) {
-                            userDatabase.totalAmountDao().updateDebitAmount(Integer.parseInt(totalAmount.getDebitAmount()) - amount,
+                            appDatabase.totalAmountDao().updateDebitAmount(Integer.parseInt(totalAmount.getDebitAmount()) - amount,
                                     transaction.getMonth());
-                            userDatabase.totalAmountDao().updateTotalAmount(Integer.parseInt(totalAmount.getTotalAmount()) - amount);
+                            appDatabase.totalAmountDao().updateTotalAmount(Integer.parseInt(totalAmount.getTotalAmount()) - amount);
                         } else {
-                            userDatabase.totalAmountDao().updateCreditAmount(Integer.parseInt(totalAmount.getCreditAmount()) + amount,
+                            appDatabase.totalAmountDao().updateCreditAmount(Integer.parseInt(totalAmount.getCreditAmount()) + amount,
                                     transaction.getMonth());
-                            userDatabase.totalAmountDao().updateTotalAmount(Integer.parseInt(totalAmount.getTotalAmount()) + amount);
+                            appDatabase.totalAmountDao().updateTotalAmount(Integer.parseInt(totalAmount.getTotalAmount()) + amount);
                         }
                     }
                     openSuccessDailog();

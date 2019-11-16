@@ -15,4 +15,13 @@ public interface UserDao {
 
     @Query("Select * from UserTable")
     User getUserInfo();
+
+    @Query("UPDATE UserTable SET Name=:name")
+    void updateUserName(String name);
+
+    @Query("UPDATE UserTable SET Pin=:pin")
+    void updateUserPin(String pin);
+
+    @Query("UPDATE UserTable SET NickName=:answer")
+    void updateUserNickName(String answer);
 }

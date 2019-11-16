@@ -12,12 +12,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,7 +28,8 @@ import com.myaudit.helper.TransactionDeleteListner;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import static com.myaudit.activity.SplashActivity.userDatabase;
+import static com.myaudit.activity.SplashActivity.appDatabase;
+import static com.myaudit.utils.AppUtils.clearAllIntent;
 import static com.myaudit.utils.AppUtils.getMonth;
 
 public class MainActivity extends AppCompatActivity {
@@ -45,10 +43,12 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<String> monthList;
     private TotalAmount totalAmount;
     private AllTransactionAdapter transactionAdapter;
-    private boolean isMonthMenuSet = false, hideDelete = false;
+    private boolean isMonthMenuSet = false, hideDelete = false, isDoublePressedToExit = false;
     private PopupMenu monthMenu;
+    private PopupMenu mainMenu;
     private ImageView addImage;
     private CardView cardCloseAmount;
+    private String selectedMonth = "";
 
     private TransactionDeleteListner deleteListner = new TransactionDeleteListner() {
         @Override
@@ -61,26 +61,26 @@ public class MainActivity extends AppCompatActivity {
                 public void onClick(DialogInterface dialogInterface, int i) {
                     try {
                         if (transaction.getType().equalsIgnoreCase("Debit")) {
-                            userDatabase.totalAmountDao().
+                            appDatabase.totalAmountDao().
                                     updateDebitAmount(Integer.parseInt(totalAmount.getDebitAmount()) +
                                             Integer.parseInt(transaction.getAmount()), transaction.getMonth());
 
-                            userDatabase.totalAmountDao().updateTotalAmount(Integer.parseInt(totalAmount.getTotalAmount())
+                            appDatabase.totalAmountDao().updateTotalAmount(Integer.parseInt(totalAmount.getTotalAmount())
                                     + Integer.parseInt(transaction.getAmount()));
 
                         } else {
-                            userDatabase.totalAmountDao()
+                            appDatabase.totalAmountDao()
                                     .updateCreditAmount(Integer.parseInt(totalAmount.getCreditAmount()) -
                                             Integer.parseInt(transaction.getAmount()), transaction.getMonth());
-                            userDatabase.totalAmountDao().updateTotalAmount(Integer.parseInt(totalAmount.getTotalAmount())
+                            appDatabase.totalAmountDao().updateTotalAmount(Integer.parseInt(totalAmount.getTotalAmount())
                                     - Integer.parseInt(transaction.getAmount()));
                         }
 
-                        userDatabase.transactionDao().deleteTransaction(transaction);
+                        appDatabase.transactionDao().deleteTransaction(transaction);
                         transList.remove(pos);
                         transactionAdapter.notifyDataSetChanged();
 
-                        totalAmount = userDatabase.totalAmountDao().getTotalAmount(getMonth());
+                        totalAmount = appDatabase.totalAmountDao().getTotalAmount(getMonth());
                         tv_totalAmount.setText("\u20B9 " + totalAmount.getTotalAmount());
                         tv_mainCredit.setText("\u20B9 " + totalAmount.getCreditAmount());
                         tv_mainDebit.setText("\u20B9 " + totalAmount.getDebitAmount());
@@ -125,9 +125,6 @@ public class MainActivity extends AppCompatActivity {
         totalAmountList = new ArrayList<>();
         monthList = new ArrayList<>();
 
-        user = userDatabase.userDao().getUserInfo();
-        tv_toolbar.setText(user.getName());
-
         tv_month.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -146,22 +143,34 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void openMenu(View view) {
-        PopupMenu popup = new PopupMenu(MainActivity.this, view);
-        popup.getMenuInflater()
-                .inflate(R.menu.main_menu, popup.getMenu());
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+        mainMenu = new PopupMenu(MainActivity.this, view);
+        mainMenu.getMenu().add("Profile");
+        if (selectedMonth.equals(getMonth())) {
+            mainMenu.getMenu().add("Debit Amount");
+            mainMenu.getMenu().add("Credit Amount");
+        }
+        mainMenu.getMenu().add("Logout");
+        mainMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
-                Intent intent = new Intent(MainActivity.this, TransactionActivity.class);
-                if (item.getTitle().equals("Debit Amount")) {
+                Intent intent = null;
+                if (item.getTitle().equals("Profile")) {
+                    intent = new Intent(MainActivity.this, ProfileActivity.class);
+                    intent.putExtra("userName", user.getName());
+                } else if (item.getTitle().equals("Debit Amount")) {
+                    intent = new Intent(MainActivity.this, TransactionActivity.class);
                     intent.putExtra("tranType", "Debit");
+                } else if (item.getTitle().equals("Logout")) {
+                   intent = new Intent(MainActivity.this, LoginActivity.class);
+                   clearAllIntent(intent);
                 } else {
+                    intent = new Intent(MainActivity.this, TransactionActivity.class);
                     intent.putExtra("tranType", "Credit");
                 }
                 startActivity(intent);
                 return true;
             }
         });
-        popup.show();
+        mainMenu.show();
     }
 
     private void setMonthMenu(ArrayList<String> list) {
@@ -180,9 +189,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void setData(final String month) {
         tv_month.setText(month);
+        selectedMonth = month;
         transList.clear();
         totalAmountList.clear();
-        totalAmountList.addAll(userDatabase.totalAmountDao().getTotalAmountList());
+        totalAmountList.addAll(appDatabase.totalAmountDao().getTotalAmountList());
         if (!isMonthMenuSet) {
             if (totalAmountList.size() != 0) {
                 monthList.clear();
@@ -192,8 +202,8 @@ public class MainActivity extends AppCompatActivity {
                 setMonthMenu(monthList);
             }
         }
-        totalAmount = userDatabase.totalAmountDao().getTotalAmount(month);
-        transList.addAll(userDatabase.transactionDao().getTransactionInfo(month));
+        totalAmount = appDatabase.totalAmountDao().getTotalAmount(month);
+        transList.addAll(appDatabase.transactionDao().getTransactionInfo(month));
         if (totalAmount == null) {
             TotalAmount totalAmount1;
             if (totalAmountList.size() == 0) {
@@ -201,17 +211,15 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 totalAmount1 = new TotalAmount(month, "0", "0", totalAmountList.get((totalAmountList.size() - 1)).getTotalAmount());
             }
-            userDatabase.totalAmountDao().addMonth(totalAmount1);
-            totalAmount = userDatabase.totalAmountDao().getTotalAmount(month);
+            appDatabase.totalAmountDao().addMonth(totalAmount1);
+            totalAmount = appDatabase.totalAmountDao().getTotalAmount(month);
         }
         Collections.reverse(transList);
 
         if (month.equals(getMonth())) {
-            addImage.setVisibility(View.VISIBLE);
             cardCloseAmount.setVisibility(View.GONE);
             hideDelete = true;
         } else {
-            addImage.setVisibility(View.GONE);
             cardCloseAmount.setVisibility(View.VISIBLE);
             hideDelete = false;
             String credtiS = totalAmount.getDebitAmount();
@@ -243,4 +251,26 @@ public class MainActivity extends AppCompatActivity {
         rv_allTrans.setAdapter(transactionAdapter);
     }
 
+    @Override
+    protected void onResume() {
+        user = appDatabase.userDao().getUserInfo();
+        tv_toolbar.setText(user.getName());
+        super.onResume();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (isDoublePressedToExit) {
+            super.onBackPressed();
+        } else {
+            Toast.makeText(this, "Click BACK again to exit from MY Audit", Toast.LENGTH_SHORT).show();
+            isDoublePressedToExit = true;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    isDoublePressedToExit = false;
+                }
+            }, 2000);
+        }
+    }
 }

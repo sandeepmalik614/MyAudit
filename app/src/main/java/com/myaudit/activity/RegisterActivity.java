@@ -1,7 +1,6 @@
 package com.myaudit.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.room.Room;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,10 +13,9 @@ import android.widget.Toast;
 
 import com.myaudit.R;
 import com.myaudit.database.user.User;
-import com.myaudit.database.userDatabase.UserDatabase;
 import com.myaudit.utils.AppPrefference;
 
-import static com.myaudit.activity.SplashActivity.userDatabase;
+import static com.myaudit.activity.SplashActivity.appDatabase;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -61,7 +59,7 @@ public class RegisterActivity extends AppCompatActivity {
     private void registerUser(String name, String pin, String nick) {
         User user = new User(name, pin, nick);
         try{
-            userDatabase.userDao().addUser(user);
+            appDatabase.userDao().addUser(user);
             AppPrefference.setUserRegister(this, true);
             Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(this, LoginActivity.class));

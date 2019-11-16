@@ -13,14 +13,14 @@ import com.myaudit.utils.AppPrefference;
 
 public class SplashActivity extends AppCompatActivity {
 
-    public static UserDatabase userDatabase;
+    public static UserDatabase appDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        userDatabase = Room.databaseBuilder(this, UserDatabase.class, "MyAuditDb")
+        appDatabase = Room.databaseBuilder(this, UserDatabase.class, "MyAuditDb")
                 .allowMainThreadQueries()
                 .build();
 

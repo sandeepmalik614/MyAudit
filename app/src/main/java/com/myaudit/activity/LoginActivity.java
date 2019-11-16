@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -66,7 +65,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         tv_toolbar.setText("Sign in");
 
-        user = SplashActivity.userDatabase.userDao().getUserInfo();
+        user = SplashActivity.appDatabase.userDao().getUserInfo();
 
         tv_userName.setText("Welcome : " + user.getName());
     }
