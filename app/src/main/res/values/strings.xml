@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">MyAudit</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_tools">Tools</string>
+    <string name="menu_share">Share</string>
+    <string name="menu_send">Send</string>
+
+    <string name="Rs">\u20B9</string>
+
+    <string name="tagline">MyAudit - Finance Mobile App Concept - If you are the sort of person who love to be as organised with personal expense tracking as you are with your expense reports at work, you will love the MyAudit App. Instead of manually logging your expenses at the end of the day (or week or month)</string>
+</resources>

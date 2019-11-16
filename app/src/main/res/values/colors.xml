@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#761DAC</color>
+    <color name="colorPrimaryDark">#3628B1</color>
+    <color name="colorAccent">#DF8CC0</color>
+
+    <color name="buttonColorActivate">#D621BA</color>
+    <color name="buttonColorDeactivate">#A2A1AA</color>
+    <color name="pinUnfilled">#E9E6F2</color>
+    <color name="saperatorColor">#F3F3F3</color>
+
+    <color name="incomeTextColor">#33691E</color>
+    <color name="expenseTextColor">#B71C1C</color>
+</resources>
